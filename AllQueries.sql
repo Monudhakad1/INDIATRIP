@@ -1,0 +1,76 @@
+-- AIRBNB 
+CREATE DATABASE INDIATRIP;
+USE  INDIATRIP;
+
+-- 	QUERY FOR CREATING A TABLE OF USERS WITH THEIR ATTRIBUTES 
+
+CREATE TABLE USERS (
+    USER_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100),
+    Email VARCHAR(199) NOT NULL UNIQUE,
+    Phone_no VARCHAR(15) NOT NULL,
+    Bio TEXT,
+    User_Type ENUM('HOST', 'GUEST') DEFAULT 'GUEST',
+    Language VARCHAR(25),
+    Password VARCHAR(255) NOT NULL
+);
+
+-- 	QUERY FOR CREATING A TABLE OF lISTING WITH THEIR ATTRIBUTES 
+
+CREATE TABLE LISTINGS (
+    LISTING_ID INT AUTO_INCREMENT PRIMARY KEY,
+    User_ID INT,
+    TITLE VARCHAR(255),
+    Description TEXT,
+    Location VARCHAR(100) NOT NULL,
+    Accomodation_Type VARCHAR(100),
+    Availability ENUM('AVAILABLE', 'UNAVAILABLE') DEFAULT 'AVAILABLE',
+    Amenities JSON,
+    Cost DECIMAL(10,2) NOT NULL,
+    Images JSON, -- Assuming you store image URLs as a JSON array
+    Cost_Per_Night DECIMAL(10,2),
+    Currnecy VARCHAR(3) , 
+    Max_Guests INT ,
+    FOREIGN KEY (User_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE
+);
+
+-- 	QUERY FOR CREATING A TABLE OF BOOKINGS WITH THEIR ATTRIBUTES 
+
+CREATE TABLE BOOKINGS (
+    BookId INT AUTO_INCREMENT PRIMARY KEY,
+    User_Id INT,
+    Listing_Id INT,
+    Host_Id INT,
+    CheckInDate DATE,
+    CheckOutDate DATE,
+    GuestCount INT,
+    Total_Fare DECIMAL(10 , 2 ),
+    Status ENUM('Pending', 'Confirmed', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (User_Id)
+        REFERENCES USERS (User_ID),
+    FOREIGN KEY (Listing_Id)
+        REFERENCES LISTINGS (Listing_ID),
+    FOREIGN KEY (Host_Id)
+        REFERENCES USERS (User_ID)
+);
+
+CREATE TABLE REVIEWS (
+    Review_Id INT AUTO_INCREMENT PRIMARY KEY,
+    Book_Id INT,
+    User_Id INT,
+    Listing_Id INT,
+    Rating INT CHECK (Rating BETWEEN 1 AND 5),
+    Comment TEXT,
+    ReviewDate DATE,
+    Experience_Description TEXT,
+    
+    FOREIGN KEY (Book_Id) REFERENCES BOOKINGS(BookId),
+    FOREIGN KEY (User_Id) REFERENCES USERS(User_ID),
+    FOREIGN KEY (Listing_Id) REFERENCES LISTINGS(Listing_Id)
+);
+
+
+
+
